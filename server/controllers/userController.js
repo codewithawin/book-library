@@ -18,6 +18,10 @@ export const getUser = async (req, res, next) => {
 export const updateUser = async (req, res, next) => {
   const { username, email, password } = req.body;
 
+  if (req.user.id !== req.params.userId) {
+    return next(errorHandler(403, "You are not allowed to update this user!"));
+  }
+
   try {
     const hashedPassword = bcryptjs.hashSync(password, 10);
     const updatedUser = await User.findByIdAndUpdate(
