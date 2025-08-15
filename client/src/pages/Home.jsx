@@ -11,13 +11,13 @@ export default function Home() {
 
         <div className="space-x-4">
           <Link 
-            href="/signin" 
+            to="/signin" 
             className="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors"
           >
             Sign In
           </Link>
           <Link 
-            href="/signup" 
+            to="/signup" 
             className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors"
           >
             Create Account
