@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
-import { store } from "./app/store";
+import { store } from "./store/store";
 import { Provider } from "react-redux";
 
 export default function App() {
