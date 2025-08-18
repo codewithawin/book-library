@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Library, Mail, Lock } from "lucide-react";
 
 export default function SignIn() {
   const [error, setError] = useState("");
@@ -16,79 +17,83 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-gray-50 to-blue-100 px-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <Link
-            to="/"
-            className="mx-auto text-6xl flex items-center justify-center mb-4"
-          >
-            📚
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
-          <p className="text-gray-500 mt-2">
-            Sign in to your BookLibrary account
-          </p>
-        </div>
-
-        {/* Login Form */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-semibold text-center">Sign In</h2>
-          <p className="text-center text-gray-500 mb-4">
-            Enter your credentials to access your library
+    <div
+      data-theme="light"
+      className="min-h-screen flex items-center justify-center bg-base-200 px-4"
+    >
+      <div className="card w-full max-w-md bg-white shadow-lg rounded-xl">
+        <div className="card-body">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Library className="w-7 h-7 text-primary" />
+            <h2 className="text-2xl font-bold text-primary">Book Library</h2>
+          </div>
+          <p className="text-center text-sm text-gray-500 mb-6">
+            Login to access your bookshelf
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="bg-red-100 border border-red-300 text-red-700 p-3 rounded-md text-sm">
-                {error}
-              </div>
-            )}
+          {error && (
+            <div className="alert alert-error text-sm py-2 mb-2">
+              <span>{error}</span>
+            </div>
+          )}
 
-            <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium">
+          <form onSubmit={handleSubmit}>
+            <fieldset className="fieldset w-full mb-2">
+              <label htmlFor="email" className="label mb-1">
                 Email
               </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="user@example.com"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
-              />
-            </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                  <Mail className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  className="input w-full pl-10 z-0"
+                  required
+                />
+              </div>
+            </fieldset>
 
-            <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium">
+            <fieldset className="fieldset w-full mb-2">
+              <label htmlFor="password" className="label mb-1">
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="password"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                  <Lock className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  className="input w-full pl-10 z-0"
+                  required
+                />
+              </div>
+            </fieldset>
+
+            <div className="text-right mb-4">
+              <Link to="/forgot-password" className="link text-sm text-primary">
+                Forgot password?
+              </Link>
             </div>
 
             <button
               type="submit"
+              className="btn btn-primary w-full"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
-              {isLoading ? "Signing In..." : "Sign In"}
+              {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
-          {/* Sign Up Link */}
-          <div className="text-center mt-6">
-            <p className="text-sm text-gray-500">
-              Don’t have an account?{" "}
-              <Link
-                to="/signup"
-                className="font-medium text-blue-600 hover:underline"
-              >
-                Sign up here
-              </Link>
-            </p>
+          <div className="mt-6 text-center text-sm text-gray-500">
+            Don’t have an account?{" "}
+            <Link to="/signup" className="link link-primary">
+              Sign up here
+            </Link>
           </div>
         </div>
       </div>
