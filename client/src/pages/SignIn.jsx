@@ -21,13 +21,13 @@ export default function SignIn() {
       data-theme="light"
       className="min-h-screen flex items-center justify-center bg-base-200 px-4"
     >
-      <div className="card w-full max-w-md bg-white shadow-lg rounded-xl">
+      <div className="card w-full max-w-md bg-base-100 shadow-xl rounded-2xl">
         <div className="card-body">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Library className="w-7 h-7 text-primary" />
+            <Library className="w-8 h-8 text-primary" />
             <h2 className="text-2xl font-bold text-primary">Book Library</h2>
           </div>
-          <p className="text-center text-sm text-gray-500 mb-6">
+          <p className="text-center text-sm text-base-content/70 mb-6">
             Login to access your bookshelf
           </p>
 
@@ -37,12 +37,12 @@ export default function SignIn() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <fieldset className="fieldset w-full mb-2">
-              <label htmlFor="email" className="label mb-1">
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <fieldset className="fieldset">
+              <label htmlFor="email" className="label text-sm">
                 Email
               </label>
-              <div className="relative">
+              <div className="relative mb-2">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
                   <Mail className="w-5 h-5 text-gray-400" />
                 </div>
@@ -54,10 +54,7 @@ export default function SignIn() {
                   required
                 />
               </div>
-            </fieldset>
-
-            <fieldset className="fieldset w-full mb-2">
-              <label htmlFor="password" className="label mb-1">
+              <label htmlFor="password" className="label text-sm">
                 Password
               </label>
               <div className="relative">
@@ -89,7 +86,7 @@ export default function SignIn() {
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-500">
+          <div className="mt-6 text-center text-sm text-base-content/70">
             Don’t have an account?{" "}
             <Link to="/signup" className="link link-primary">
               Sign up here
