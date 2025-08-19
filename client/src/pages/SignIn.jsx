@@ -3,16 +3,52 @@ import { Link } from "react-router-dom";
 import { Library, Mail, Lock } from "lucide-react";
 
 export default function SignIn() {
-  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    general: "",
+  });
+
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "", general: "" });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    let valid = true;
+    const newErrors = { email: "", password: "", general: "" };
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+      valid = false;
+    }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+      valid = false;
+    }
+
+    if (!valid) {
+      setErrors(newErrors);
+      return;
+    }
+
     setIsLoading(true);
 
     setTimeout(() => {
       setIsLoading(false);
-      setError("Invalid credentials");
+      setErrors({
+        ...newErrors,
+        general: "Invalid email or password",
+      });
     }, 1500);
   };
 
@@ -31,51 +67,52 @@ export default function SignIn() {
             Login to access your bookshelf
           </p>
 
-          {error && (
+          {errors.general && (
             <div className="alert alert-error text-sm py-2 mb-2">
-              <span>{error}</span>
+              <span>{errors.general}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <fieldset className="fieldset">
-              <label htmlFor="email" className="label text-sm">
-                Email
-              </label>
-              <div className="relative mb-2">
+              <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
                   <Mail className="w-5 h-5 text-gray-400" />
                 </div>
                 <input
                   id="email"
+                  name="email"
                   type="email"
-                  placeholder="you@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email"
                   className="input w-full pl-10 z-0"
                   required
                 />
               </div>
-              <label htmlFor="password" className="label text-sm">
-                Password
-              </label>
-              <div className="relative">
+              {errors.email && (
+                <p className="text-sm text-red-600">{errors.email}</p>
+              )}
+
+              <div className="relative mt-2">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
                   <Lock className="w-5 h-5 text-gray-400" />
                 </div>
                 <input
                   id="password"
+                  name="password"
                   type="password"
-                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Password"
                   className="input w-full pl-10 z-0"
                   required
                 />
               </div>
+              {errors.password && (
+                <p className="text-sm text-red-600">{errors.password}</p>
+              )}
             </fieldset>
-
-            <div className="text-right mb-4">
-              <Link to="/forgot-password" className="link text-sm text-primary">
-                Forgot password?
-              </Link>
-            </div>
 
             <button
               type="submit"

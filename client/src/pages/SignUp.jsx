@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Library, Mail, Lock, User } from "lucide-react";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ export default function SignUp() {
 
     try {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // simulate API
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       alert("Account created successfully!");
       navigate("/dashboard");
     } catch (err) {
@@ -73,143 +74,119 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-gray-50 to-blue-100/20 px-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <Link
-            to="/"
-            className="mx-auto text-6xl flex items-center justify-center mb-4"
-          >
-            📚
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Join BookLibrary</h1>
-          <p className="text-gray-500 mt-2">
-            Create your account and start organizing your books
-          </p>
-        </div>
-
-        {/* Register Form */}
-        <div className="bg-white shadow-md rounded-2xl p-6 space-y-6">
-          <div className="space-y-1 text-center">
-            <h2 className="text-2xl font-semibold">Create Account</h2>
-            <p className="text-gray-500">Fill in your details to get started</p>
+    <div
+      data-theme="light"
+      className="min-h-screen flex items-center justify-center bg-base-200 px-4"
+    >
+      <div className="card w-full max-w-md bg-base-100 shadow-xl rounded-2xl">
+        <div className="card-body">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Library className="w-8 h-8 text-primary" />
+            <h2 className="text-2xl font-bold text-primary">Book Library</h2>
           </div>
+          <p className="text-center text-sm text-base-content/70 mb-6">
+            Create your account to start organizing your books
+          </p>
 
           {errors.general && (
-            <div className="bg-red-100 text-red-700 p-2 rounded flex items-center">
-              <span className="mr-2">⚠️</span> {errors.general}
+            <div className="alert alert-error text-sm py-2 mb-2">
+              <span>{errors.general}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
-            <div className="space-y-1">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Full Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your full name"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-              />
+            <fieldset className="fieldset">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                  <User className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Full Name"
+                  className="input w-full pl-10 z-0"
+                  required
+                />
+              </div>
               {errors.name && (
                 <p className="text-sm text-red-600">{errors.name}</p>
               )}
-            </div>
 
-            {/* Email */}
-            <div className="space-y-1">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-              />
+              <div className="relative mt-2">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                  <Mail className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  className="input w-full pl-10 z-0"
+                  required
+                />
+              </div>
               {errors.email && (
                 <p className="text-sm text-red-600">{errors.email}</p>
               )}
-            </div>
 
-            {/* Password */}
-            <div className="space-y-1">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Create a password"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-              />
+              <div className="relative mt-2">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                  <Lock className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Password"
+                  className="input w-full pl-10 z-0"
+                  required
+                />
+              </div>
               {errors.password && (
                 <p className="text-sm text-red-600">{errors.password}</p>
               )}
-            </div>
 
-            {/* Confirm Password */}
-            <div className="space-y-1">
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Confirm Password
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm your password"
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-              />
+              <div className="relative mt-2">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                  <Lock className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm Password"
+                  className="input w-full pl-10 z-0"
+                  required
+                />
+              </div>
               {errors.confirmPassword && (
                 <p className="text-sm text-red-600">{errors.confirmPassword}</p>
               )}
-            </div>
+            </fieldset>
 
             <button
               type="submit"
+              className="btn btn-primary w-full"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:opacity-90 transition disabled:opacity-50"
             >
               {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 
-          {/* Sign In Link */}
-          <div className="text-center mt-6">
-            <p className="text-sm text-gray-500">
-              Already have an account?{" "}
-              <Link
-                to="/signin"
-                className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
-              >
-                Sign in here
-              </Link>
-            </p>
+          <div className="mt-6 text-center text-sm text-base-content/70">
+            Already have an account?{" "}
+            <Link to="/signin" className="link link-primary">
+              Sign in here
+            </Link>
           </div>
         </div>
       </div>
