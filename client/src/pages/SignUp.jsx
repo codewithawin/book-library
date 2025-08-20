@@ -81,10 +81,11 @@ export default function SignUp() {
       <div className="card w-full max-w-md bg-base-100 shadow-xl rounded-2xl">
         <div className="card-body">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Library className="w-8 h-8 text-primary" />
-            <h2 className="text-2xl font-bold text-primary">Book Library</h2>
+            <Library className="w-9 h-9 text-primary" />
+            <h2 className="text-3xl font-bold text-primary">Book Library</h2>
           </div>
-          <p className="text-center text-sm text-base-content/70 mb-6">
+
+          <p className="text-center text-base text-base-content/70 mb-6">
             Create your account to start organizing your books
           </p>
 
@@ -107,12 +108,12 @@ export default function SignUp() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Full Name"
-                  className="input w-full pl-10 z-0"
+                  className="input w-full pl-10 z-0 text-base"
                   required
                 />
               </div>
               {errors.name && (
-                <p className="text-sm text-red-600">{errors.name}</p>
+                <p className="text-xs text-red-600">{errors.name}</p>
               )}
 
               <div className="relative mt-2">
@@ -126,12 +127,12 @@ export default function SignUp() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Email"
-                  className="input w-full pl-10 z-0"
+                  className="input w-full pl-10 z-0 text-base"
                   required
                 />
               </div>
               {errors.email && (
-                <p className="text-sm text-red-600">{errors.email}</p>
+                <p className="text-xs text-red-600">{errors.email}</p>
               )}
 
               <div className="relative mt-2">
@@ -145,12 +146,12 @@ export default function SignUp() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Password"
-                  className="input w-full pl-10 z-0"
+                  className="input w-full pl-10 z-0 text-base"
                   required
                 />
               </div>
               {errors.password && (
-                <p className="text-sm text-red-600">{errors.password}</p>
+                <p className="text-xs text-red-600">{errors.password}</p>
               )}
 
               <div className="relative mt-2">
@@ -164,18 +165,18 @@ export default function SignUp() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirm Password"
-                  className="input w-full pl-10 z-0"
+                  className="input w-full pl-10 z-0 text-base"
                   required
                 />
               </div>
               {errors.confirmPassword && (
-                <p className="text-sm text-red-600">{errors.confirmPassword}</p>
+                <p className="text-xs text-red-600">{errors.confirmPassword}</p>
               )}
             </fieldset>
 
             <button
               type="submit"
-              className="btn btn-primary w-full"
+              className="btn btn-primary w-full text-base"
               disabled={isLoading}
             >
               {isLoading ? "Creating Account..." : "Create Account"}
