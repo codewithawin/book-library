@@ -6,6 +6,7 @@ import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
