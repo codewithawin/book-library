@@ -3,10 +3,7 @@ import { Library, LogIn, UserPlus } from "lucide-react";
 
 export default function Home() {
   return (
-    <div
-      data-theme="light"
-      className="min-h-screen flex items-center justify-center bg-base-100"
-    >
+    <div className="min-h-screen flex items-center justify-center bg-base-100">
       <div className="card w-full max-w-2xl bg-base-200 shadow-xl">
         <div className="card-body text-center">
           <div className="flex justify-center mb-4">
