@@ -11,6 +11,7 @@ import { logout } from "../store/slices/authSlice";
 import { Library, Plus, Search, LogOut, X } from "lucide-react";
 import BookCard from "../components/BookCard";
 import { mockBooks } from "../store/slices/mockBooks";
+import { usePagination } from "../hooks/usePagination";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -38,6 +39,17 @@ const Dashboard = () => {
   const handleDeleteBook = (bookId) => {
     console.log("Delete book with ID:", bookId);
   };
+
+  const {
+    currentPage,
+    totalPages,
+    paginatedData,
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    canGoNext,
+    canGoPrevious,
+  } = usePagination({ data: mockBooks, itemsPerPage: 8 });
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
@@ -169,7 +181,7 @@ const Dashboard = () => {
 
         <div className="space-y-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {mockBooks.map((book) => (
+            {paginatedData.map((book) => (
               <BookCard
                 key={book.id}
                 book={book}
@@ -178,6 +190,40 @@ const Dashboard = () => {
               />
             ))}
           </div>
+
+          {totalPages > 1 && (
+            <div className="flex justify-center">
+              <div className="join">
+                <button
+                  onClick={goToPreviousPage}
+                  disabled={!canGoPrevious}
+                  className="join-item btn btn-sm"
+                >
+                  Prev
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => goToPage(page)}
+                      className={`join-item btn btn-sm ${
+                        page === currentPage ? "btn-primary" : ""
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+                <button
+                  onClick={goToNextPage}
+                  disabled={!canGoNext}
+                  className="join-item btn btn-sm"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
