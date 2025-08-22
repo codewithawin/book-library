@@ -9,6 +9,8 @@ import {
 } from "../store/slices/booksSlice";
 import { logout } from "../store/slices/authSlice";
 import { Library, Plus, Search, LogOut, X } from "lucide-react";
+import BookCard from "../components/BookCard";
+import { mockBooks } from "../store/slices/mockBooks";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -28,6 +30,14 @@ const Dashboard = () => {
   const handleClearFilters = () => dispatch(clearFilters());
 
   const hasActiveFilters = searchQuery || selectedGenre;
+
+  const handleEditBook = (book) => {
+    console.log("Edit book:", book);
+  };
+
+  const handleDeleteBook = (bookId) => {
+    console.log("Delete book with ID:", bookId);
+  };
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
@@ -155,6 +165,19 @@ const Dashboard = () => {
               )}
             </div>
           )}
+        </div>
+
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {mockBooks.map((book) => (
+              <BookCard
+                key={book.id}
+                book={book}
+                onEdit={handleEditBook}
+                onDelete={handleDeleteBook}
+              />
+            ))}
+          </div>
         </div>
       </main>
     </div>
