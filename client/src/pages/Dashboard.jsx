@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -12,12 +12,16 @@ import { Library, Plus, Search, LogOut, X } from "lucide-react";
 import BookCard from "../components/BookCard";
 import { mockBooks } from "../store/slices/mockBooks";
 import { usePagination } from "../hooks/usePagination";
+import BookModal from "../components/BookModal";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { filteredBooks, searchQuery, selectedGenre, isLoading, error, books } =
     useSelector((state) => state.books);
+
+  const [isBookModalOpen, setIsBookModalOpen] = useState(false);
+  const [editingBook, setEditingBook] = useState(null);
 
   const genres = Array.from(new Set(books.map((book) => book.genre))).filter(
     Boolean
@@ -32,14 +36,6 @@ const Dashboard = () => {
 
   const hasActiveFilters = searchQuery || selectedGenre;
 
-  const handleEditBook = (book) => {
-    console.log("Edit book:", book);
-  };
-
-  const handleDeleteBook = (bookId) => {
-    console.log("Delete book with ID:", bookId);
-  };
-
   const {
     currentPage,
     totalPages,
@@ -50,6 +46,20 @@ const Dashboard = () => {
     canGoNext,
     canGoPrevious,
   } = usePagination({ data: mockBooks, itemsPerPage: 8 });
+
+  const handleAddBook = () => {
+    setEditingBook(null);
+    setIsBookModalOpen(true);
+  };
+
+  const handleEditBook = (book) => {
+    setEditingBook(book);
+    setIsBookModalOpen(true);
+  };
+
+  const handleDeleteBook = (bookId) => {
+    console.log("Delete book with ID:", bookId);
+  };
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
@@ -113,7 +123,7 @@ const Dashboard = () => {
               </p>
             </div>
 
-            <button className="btn btn-primary gap-2">
+            <button onClick={handleAddBook} className="btn btn-primary gap-2">
               <Plus className="w-4 h-4" />
               Add Book
             </button>
@@ -226,6 +236,12 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+
+      <BookModal
+        isOpen={isBookModalOpen}
+        onClose={() => setIsBookModalOpen(false)}
+        book={editingBook}
+      />
     </div>
   );
 };
