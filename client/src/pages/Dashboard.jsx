@@ -13,6 +13,7 @@ import BookCard from "../components/BookCard";
 import { mockBooks } from "../store/slices/mockBooks";
 import { usePagination } from "../hooks/usePagination";
 import BookModal from "../components/BookModal";
+import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,9 @@ const Dashboard = () => {
 
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
+  const [deleteBookId, setDeleteBookId] = useState(null);
+  const [deletingBookTitle, setDeletingBookTitle] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const genres = Array.from(new Set(books.map((book) => book.genre))).filter(
     Boolean
@@ -58,7 +62,27 @@ const Dashboard = () => {
   };
 
   const handleDeleteBook = (bookId) => {
-    console.log("Delete book with ID:", bookId);
+    const book = mockBooks.find((b) => b.id === bookId);
+    if (book) {
+      setDeleteBookId(bookId);
+      setDeletingBookTitle(book.title);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (deleteBookId) {
+      setIsDeleting(true);
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        console.log("Book deleted");
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsDeleting(false);
+        setDeleteBookId(null);
+        setDeletingBookTitle("");
+      }
+    }
   };
 
   return (
@@ -241,6 +265,16 @@ const Dashboard = () => {
         isOpen={isBookModalOpen}
         onClose={() => setIsBookModalOpen(false)}
         book={editingBook}
+      />
+
+      <DeleteConfirmDialog
+        isOpen={!!deleteBookId}
+        onClose={() => {
+          setDeleteBookId(false);
+        }}
+        onConfirm={confirmDelete}
+        bookTitle={deletingBookTitle}
+        isLoading={isDeleting}
       />
     </div>
   );
