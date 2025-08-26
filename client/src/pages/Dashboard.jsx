@@ -14,6 +14,7 @@ import { mockBooks } from "../store/slices/mockBooks";
 import { usePagination } from "../hooks/usePagination";
 import BookModal from "../components/BookModal";
 import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
+import EmptyState from "../components/EmptyState";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -213,52 +214,71 @@ const Dashboard = () => {
           )}
         </div>
 
-        <div className="space-y-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {paginatedData.map((book) => (
-              <BookCard
-                key={book.id}
-                book={book}
-                onEdit={handleEditBook}
-                onDelete={handleDeleteBook}
-              />
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <div className="flex justify-center">
-              <div className="join">
-                <button
-                  onClick={goToPreviousPage}
-                  disabled={!canGoPrevious}
-                  className="join-item btn btn-sm"
-                >
-                  Prev
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page)}
-                      className={`join-item btn btn-sm ${
-                        page === currentPage ? "btn-primary" : ""
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  )
-                )}
-                <button
-                  onClick={goToNextPage}
-                  disabled={!canGoNext}
-                  className="join-item btn btn-sm"
-                >
-                  Next
-                </button>
+        {filteredBooks.length === 0 ? (
+          mockBooks.length === 0 ? (
+            <EmptyState onAddBook={handleAddBook} />
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 mx-auto bg-base-300 rounded-full flex items-center justify-center mb-4">
+                <Search className="w-8 h-8 text-base-content/70" />
               </div>
+              <h3 className="text-xl font-bold mb-2">No books found</h3>
+              <p className="text-base-content/70 mb-4">
+                Try adjusting your search or filter criteria
+              </p>
+              <button onClick={handleClearFilters} className="btn btn-outline">
+                Clear Filters
+              </button>
             </div>
-          )}
-        </div>
+          )
+        ) : (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {paginatedData.map((book) => (
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  onEdit={handleEditBook}
+                  onDelete={handleDeleteBook}
+                />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex justify-center">
+                <div className="join">
+                  <button
+                    onClick={goToPreviousPage}
+                    disabled={!canGoPrevious}
+                    className="join-item btn btn-sm"
+                  >
+                    Prev
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        onClick={() => goToPage(page)}
+                        className={`join-item btn btn-sm ${
+                          page === currentPage ? "btn-primary" : ""
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
+                  <button
+                    onClick={goToNextPage}
+                    disabled={!canGoNext}
+                    className="join-item btn btn-sm"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       <BookModal
