@@ -15,6 +15,7 @@ import { usePagination } from "../hooks/usePagination";
 import BookModal from "../components/BookModal";
 import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 import EmptyState from "../components/EmptyState";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -214,7 +215,14 @@ const Dashboard = () => {
           )}
         </div>
 
-        {filteredBooks.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <LoadingSpinner size="lg" />
+            <span className="ml-3 text-base-content/70">
+              Loading your books...
+            </span>
+          </div>
+        ) : filteredBooks.length === 0 ? (
           mockBooks.length === 0 ? (
             <EmptyState onAddBook={handleAddBook} />
           ) : (
