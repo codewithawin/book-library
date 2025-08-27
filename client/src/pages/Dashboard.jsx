@@ -89,42 +89,47 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
-      <header className="bg-base-100 border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <Library className="w-8 h-8 text-primary" />
-              <h1 className="text-2xl font-bold text-primary">Book Library</h1>
-            </div>
+      <header className="navbar bg-base-100 shadow-sm">
+        <div className="max-w-7xl mx-auto w-full px-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Library className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-bold text-primary">Book Library</h1>
+          </div>
 
-            <div className="flex items-center gap-4">
-              <Link
-                to="/profile"
-                className="flex items-center gap-2 hover:opacity-80 transition"
-              >
-                <div className="avatar placeholder">
-                  <div className="bg-neutral text-neutral-content rounded-full w-8 h-8">
-                    <span className="text-sm">
-                      {user?.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </span>
-                  </div>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/profile"
+              className="flex items-center gap-2 hover:opacity-80 transition"
+            >
+              <div className="avatar">
+                <div className="w-8 h-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+                  {user?.avatarUrl ? (
+                    <img src={user.avatarUrl} alt={user?.name || "User"} />
+                  ) : (
+                    <div className="bg-primary text-primary-content flex items-center justify-center w-full h-full">
+                      <span className="text-sm font-semibold">
+                        {user?.name
+                          ?.split(" ")
+                          .map((n) => n[0])
+                          .join("") || "?"}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <span className="hidden sm:block text-sm font-medium">
-                  {user?.name}
-                </span>
-              </Link>
+              </div>
 
-              <button
-                onClick={handleLogout}
-                className="btn btn-outline btn-sm gap-2"
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </button>
-            </div>
+              <span className="hidden sm:block text-sm font-medium">
+                {user?.name}
+              </span>
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="btn btn-sm btn-primary btn-outline gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
           </div>
         </div>
       </header>
@@ -157,7 +162,7 @@ const Dashboard = () => {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/50" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/50 z-10" />
               <input
                 type="text"
                 placeholder="Search by title, author, or genre..."
@@ -190,7 +195,7 @@ const Dashboard = () => {
               {hasActiveFilters && (
                 <button
                   onClick={handleClearFilters}
-                  className="btn btn-outline btn-sm gap-2"
+                  className="btn btn-error btn-outline gap-2"
                 >
                   <X className="w-4 h-4" />
                   Clear
