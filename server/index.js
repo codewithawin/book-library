@@ -5,6 +5,7 @@ import authRoutes from "./routes/authRoute.js";
 import userRoutes from "./routes/userRoute.js";
 import bookRoutes from "./routes/bookRoute.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 dotenv.config();
 
@@ -18,6 +19,8 @@ mongoose
   });
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());

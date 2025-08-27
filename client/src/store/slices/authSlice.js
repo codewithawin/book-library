@@ -11,43 +11,57 @@ const initialState = {
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async ({ email, password }) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (email === "user@example.com" && password === "password") {
-      const mockUser = {
-        id: "1",
-        email: email,
-        name: "Demo User",
-      };
-      const mockToken = "mock-jwt-token";
+      const data = await response.json();
 
-      localStorage.setItem("user", JSON.stringify(mockUser));
-      localStorage.setItem("token", mockToken);
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Login failed");
+      }
 
-      return { user: mockUser, token: mockToken };
-    } else {
-      throw new Error("Invalid credentials");
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+
+      return { user: data.user, token: data.token };
+    } catch (error) {
+      return rejectWithValue(error.message || "Network error");
     }
   }
 );
 
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async ({ email, password, name }) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  async ({ email, password, name }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, name }),
+      });
 
-    const mockUser = {
-      id: "1",
-      email: email,
-      name: name,
-    };
-    const mockToken = "mock-jwt-token";
+      const data = await response.json();
 
-    localStorage.setItem("user", JSON.stringify(mockUser));
-    localStorage.setItem("token", mockToken);
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Registration failed");
+      }
 
-    return { user: mockUser, token: mockToken };
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+
+      return { user: data.user, token: data.token };
+    } catch (error) {
+      return rejectWithValue(error.message || "Network error");
+    }
   }
 );
 
@@ -67,7 +81,6 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Login
     builder
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
@@ -81,10 +94,9 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || "Login failed";
+        state.error = action.payload || "Login failed";
       });
 
-    // Register
     builder
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
@@ -98,7 +110,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || "Registration failed";
+        state.error = action.payload || "Registration failed";
       });
   },
 });
