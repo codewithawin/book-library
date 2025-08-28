@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Library } from "lucide-react";
 import { loginUser, clearError } from "../store/slices/authSlice";
+import { toast } from "react-toastify";
 
 export default function SignIn() {
   const dispatch = useDispatch();
@@ -26,15 +27,17 @@ export default function SignIn() {
 
   useEffect(() => {
     if (user) {
+      toast.success("Login successful!");
       navigate("/dashboard");
     }
   }, [user, navigate]);
 
   useEffect(() => {
     if (error) {
-      setError("general", { type: "manual", message: error });
+      toast.error(error);
+      dispatch(clearError());
     }
-  }, [error, setError]);
+  }, [error, dispatch]);
 
   const onSubmit = (data) => {
     dispatch(clearError());
@@ -53,12 +56,6 @@ export default function SignIn() {
           <p className="text-center text-base text-base-content/70 mb-6">
             Login to access your bookshelf
           </p>
-
-          {errors.general && (
-            <div className="alert alert-error text-sm py-2 mb-2">
-              <span>{errors.general.message}</span>
-            </div>
-          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <fieldset className="fieldset">

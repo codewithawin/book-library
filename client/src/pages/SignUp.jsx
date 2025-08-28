@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Library, Mail, Lock, User } from "lucide-react";
 import { registerUser, clearError } from "../store/slices/authSlice";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
   const dispatch = useDispatch();
@@ -31,15 +32,17 @@ export default function SignUp() {
 
   useEffect(() => {
     if (user) {
+      toast.success("Account created successfully!");
       navigate("/dashboard");
     }
   }, [user, navigate]);
 
   useEffect(() => {
     if (error) {
-      setError("general", { type: "manual", message: error });
+      toast.error(error);
+      dispatch(clearError());
     }
-  }, [error, setError]);
+  }, [error, dispatch]);
 
   const onSubmit = (data) => {
     dispatch(clearError());
@@ -64,12 +67,6 @@ export default function SignUp() {
           <p className="text-center text-base text-base-content/70 mb-6">
             Create your account to start organizing your books
           </p>
-
-          {errors.general && (
-            <div className="alert alert-error text-sm py-2 mb-2">
-              <span>{errors.general.message}</span>
-            </div>
-          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <fieldset className="fieldset">
