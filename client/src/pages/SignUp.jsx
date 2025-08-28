@@ -1,76 +1,55 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Library, Mail, Lock, User } from "lucide-react";
+import { registerUser, clearError } from "../store/slices/authSlice";
 
 export default function SignUp() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+  const { user, isLoading, error } = useSelector((state) => state.auth);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    clearErrors,
+    watch,
+  } = useForm({
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    general: "",
-  });
+  const password = watch("password");
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "", general: "" });
-  };
-
-  const validateEmail = (email) => {
-    return /^\S+@\S+\.\S+$/.test(email);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    let valid = true;
-    const newErrors = { ...errors };
-
-    if (!formData.name || formData.name.length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-      valid = false;
-    }
-
-    if (!formData.email || !validateEmail(formData.email)) {
-      newErrors.email = "Invalid email address";
-      valid = false;
-    }
-
-    if (!formData.password || formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-      valid = false;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-      valid = false;
-    }
-
-    if (!valid) {
-      setErrors(newErrors);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert("Account created successfully!");
+  useEffect(() => {
+    if (user) {
       navigate("/dashboard");
-    } catch (err) {
-      setErrors({ ...newErrors, general: "Registration failed. Try again." });
-    } finally {
-      setIsLoading(false);
     }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (error) {
+      setError("general", { type: "manual", message: error });
+    }
+  }, [error, setError]);
+
+  const onSubmit = (data) => {
+    dispatch(clearError());
+    dispatch(
+      registerUser({
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      })
+    );
   };
 
   return (
@@ -88,29 +67,33 @@ export default function SignUp() {
 
           {errors.general && (
             <div className="alert alert-error text-sm py-2 mb-2">
-              <span>{errors.general}</span>
+              <span>{errors.general.message}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <fieldset className="fieldset">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
                   <User className="w-5 h-5 text-gray-400" />
                 </div>
                 <input
-                  id="name"
-                  name="name"
                   type="text"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Full Name"
+                  placeholder="Username"
                   className="input w-full pl-10 z-0 text-base"
-                  required
+                  {...register("username", {
+                    required: "Name is required",
+                    minLength: {
+                      value: 2,
+                      message: "Name must be at least 2 characters",
+                    },
+                  })}
                 />
               </div>
-              {errors.name && (
-                <p className="text-xs text-red-600">{errors.name}</p>
+              {errors.username && (
+                <p className="text-xs text-red-600">
+                  {errors.username.message}
+                </p>
               )}
 
               <div className="relative mt-2">
@@ -118,18 +101,20 @@ export default function SignUp() {
                   <Mail className="w-5 h-5 text-gray-400" />
                 </div>
                 <input
-                  id="email"
-                  name="email"
                   type="email"
-                  value={formData.email}
-                  onChange={handleChange}
                   placeholder="Email"
                   className="input w-full pl-10 z-0 text-base"
-                  required
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+\.\S+$/,
+                      message: "Invalid email address",
+                    },
+                  })}
                 />
               </div>
               {errors.email && (
-                <p className="text-xs text-red-600">{errors.email}</p>
+                <p className="text-xs text-red-600">{errors.email.message}</p>
               )}
 
               <div className="relative mt-2">
@@ -137,18 +122,22 @@ export default function SignUp() {
                   <Lock className="w-5 h-5 text-gray-400" />
                 </div>
                 <input
-                  id="password"
-                  name="password"
                   type="password"
-                  value={formData.password}
-                  onChange={handleChange}
                   placeholder="Password"
                   className="input w-full pl-10 z-0 text-base"
-                  required
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
                 />
               </div>
               {errors.password && (
-                <p className="text-xs text-red-600">{errors.password}</p>
+                <p className="text-xs text-red-600">
+                  {errors.password.message}
+                </p>
               )}
 
               <div className="relative mt-2">
@@ -156,18 +145,20 @@ export default function SignUp() {
                   <Lock className="w-5 h-5 text-gray-400" />
                 </div>
                 <input
-                  id="confirmPassword"
-                  name="confirmPassword"
                   type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
                   placeholder="Confirm Password"
                   className="input w-full pl-10 z-0 text-base"
-                  required
+                  {...register("confirmPassword", {
+                    required: "Confirm Password is required",
+                    validate: (value) =>
+                      value === password || "Passwords do not match",
+                  })}
                 />
               </div>
               {errors.confirmPassword && (
-                <p className="text-xs text-red-600">{errors.confirmPassword}</p>
+                <p className="text-xs text-red-600">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </fieldset>
 

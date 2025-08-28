@@ -108,7 +108,7 @@ const Dashboard = () => {
                   ) : (
                     <div className="bg-primary text-primary-content flex items-center justify-center w-full h-full">
                       <span className="text-sm font-semibold">
-                        {user?.name
+                        {user?.username
                           ?.split(" ")
                           .map((n) => n[0])
                           .join("") || "?"}
@@ -119,7 +119,7 @@ const Dashboard = () => {
               </div>
 
               <span className="hidden sm:block text-sm font-medium">
-                {user?.name}
+                {user?.username}
               </span>
             </Link>
 
