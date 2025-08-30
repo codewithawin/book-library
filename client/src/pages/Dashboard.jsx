@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
   fetchBooks,
+  deleteBook,
   setSearchQuery,
   setSelectedGenre,
   clearFilters,
@@ -10,7 +11,6 @@ import {
 import { logout } from "../store/slices/authSlice";
 import { Library, Plus, Search, LogOut, X } from "lucide-react";
 import BookCard from "../components/BookCard";
-import { mockBooks } from "../store/slices/mockBooks";
 import { usePagination } from "../hooks/usePagination";
 import BookModal from "../components/BookModal";
 import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
@@ -51,7 +51,7 @@ const Dashboard = () => {
     goToPreviousPage,
     canGoNext,
     canGoPrevious,
-  } = usePagination({ data: mockBooks, itemsPerPage: 8 });
+  } = usePagination({ data: filteredBooks, itemsPerPage: 8 });
 
   const handleAddBook = () => {
     setEditingBook(null);
@@ -64,7 +64,7 @@ const Dashboard = () => {
   };
 
   const handleDeleteBook = (bookId) => {
-    const book = mockBooks.find((b) => b.id === bookId);
+    const book = books.find((b) => b._id === bookId);
     if (book) {
       setDeleteBookId(bookId);
       setDeletingBookTitle(book.title);
@@ -75,7 +75,7 @@ const Dashboard = () => {
     if (deleteBookId) {
       setIsDeleting(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await dispatch(deleteBook(deleteBookId));
         console.log("Book deleted");
       } catch (error) {
         console.log(error);
@@ -140,17 +140,14 @@ const Dashboard = () => {
             <div>
               <h2 className="text-2xl font-bold">Your Books</h2>
               <p className="text-sm text-base-content/70 mt-1">
-                {isLoading
-                  ? "Loading..."
-                  : error
-                  ? "Failed to load books"
-                  : `${filteredBooks.length} ${
-                      filteredBooks.length === 1 ? "book" : "books"
-                    }${
-                      hasActiveFilters
-                        ? ` (filtered from ${books.length} total)`
-                        : ""
-                    }`}
+                {filteredBooks.length}{" "}
+                {filteredBooks.length === 1 ? "book" : "books"}
+                {hasActiveFilters && ` (filtered from ${books.length} total)`}
+                {totalPages > 1 && (
+                  <span className="ml-2">
+                    • Page {currentPage} of {totalPages}
+                  </span>
+                )}
               </p>
             </div>
 
@@ -228,7 +225,7 @@ const Dashboard = () => {
             </span>
           </div>
         ) : filteredBooks.length === 0 ? (
-          mockBooks.length === 0 ? (
+          books.length === 0 ? (
             <EmptyState onAddBook={handleAddBook} />
           ) : (
             <div className="text-center py-16">
@@ -249,7 +246,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {paginatedData.map((book) => (
                 <BookCard
-                  key={book.id}
+                  key={book._id}
                   book={book}
                   onEdit={handleEditBook}
                   onDelete={handleDeleteBook}

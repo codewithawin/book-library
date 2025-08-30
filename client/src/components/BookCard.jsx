@@ -79,7 +79,7 @@ const BookCard = ({ book, onEdit, onDelete }) => {
           </button>
           <button
             className="btn btn-outline btn-sm btn-error flex-1"
-            onClick={() => onDelete(book.id)}
+            onClick={() => onDelete(book._id)}
           >
             <Trash2 className="w-4 h-4 mr-1" />
             Delete

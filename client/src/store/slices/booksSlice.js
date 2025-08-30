@@ -1,42 +1,68 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { mockBooks } from "./mockBooks";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+import { apiFetch } from "../../utils/api";
 
 const initialState = {
-  books: mockBooks,
-  filteredBooks: mockBooks,
+  books: [],
+  filteredBooks: [],
   searchQuery: "",
   selectedGenre: "",
   isLoading: false,
   error: null,
 };
 
-export const fetchBooks = createAsyncThunk("books/fetchBooks", async () => {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  return mockBooks;
-});
+export const fetchBooks = createAsyncThunk(
+  "books/fetchBooks",
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await apiFetch("/book");
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || "Failed to fetch books");
+    }
+  }
+);
 
-export const addBook = createAsyncThunk("books/addBook", async (bookData) => {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  const newBook = {
-    ...bookData,
-    id: Date.now().toString(),
-    addedDate: new Date().toISOString().split("T")[0],
-  };
-  return newBook;
-});
+export const addBook = createAsyncThunk(
+  "books/addBook",
+  async (bookData, { rejectWithValue }) => {
+    try {
+      const data = await apiFetch("/book", {
+        method: "POST",
+        body: JSON.stringify(bookData),
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || "Failed to add book");
+    }
+  }
+);
 
-export const updateBook = createAsyncThunk("books/updateBook", async (book) => {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return book;
-});
+export const updateBook = createAsyncThunk(
+  "books/updateBook",
+  async (book, { rejectWithValue }) => {
+    try {
+      const data = await apiFetch(`/book/${book._id}`, {
+        method: "PUT",
+        body: JSON.stringify(book),
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || "Failed to update book");
+    }
+  }
+);
 
 export const deleteBook = createAsyncThunk(
   "books/deleteBook",
-  async (bookId) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return bookId;
+  async (bookId, { rejectWithValue }) => {
+    try {
+      await apiFetch(`/book/${bookId}`, {
+        method: "DELETE",
+      });
+      return bookId;
+    } catch (error) {
+      return rejectWithValue(error.message || "Failed to delete book");
+    }
   }
 );
 
@@ -79,17 +105,16 @@ const booksSlice = createSlice({
         state.isLoading = false;
         state.books = action.payload;
         state.filteredBooks = filterBooks(
-          action.payload,
+          state.books,
           state.searchQuery,
           state.selectedGenre
         );
       })
       .addCase(fetchBooks.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || "Failed to fetch books";
-      });
+        state.error = action.payload;
+      })
 
-    builder
       .addCase(addBook.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -105,10 +130,9 @@ const booksSlice = createSlice({
       })
       .addCase(addBook.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || "Failed to add book";
-      });
+        state.error = action.payload;
+      })
 
-    builder
       .addCase(updateBook.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -116,11 +140,9 @@ const booksSlice = createSlice({
       .addCase(updateBook.fulfilled, (state, action) => {
         state.isLoading = false;
         const index = state.books.findIndex(
-          (book) => book.id === action.payload.id
+          (book) => book._id === action.payload._id
         );
-        if (index !== -1) {
-          state.books[index] = action.payload;
-        }
+        if (index !== -1) state.books[index] = action.payload;
         state.filteredBooks = filterBooks(
           state.books,
           state.searchQuery,
@@ -129,17 +151,16 @@ const booksSlice = createSlice({
       })
       .addCase(updateBook.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || "Failed to update book";
-      });
+        state.error = action.payload;
+      })
 
-    builder
       .addCase(deleteBook.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(deleteBook.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.books = state.books.filter((book) => book.id !== action.payload);
+        state.books = state.books.filter((book) => book._id !== action.payload);
         state.filteredBooks = filterBooks(
           state.books,
           state.searchQuery,
@@ -148,7 +169,7 @@ const booksSlice = createSlice({
       })
       .addCase(deleteBook.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || "Failed to delete book";
+        state.error = action.payload;
       });
   },
 });

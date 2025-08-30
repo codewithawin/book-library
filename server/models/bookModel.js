@@ -33,8 +33,6 @@ const bookSchema = new mongoose.Schema(
     },
     coverImage: {
       type: String,
-      default:
-        "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg",
     },
     status: {
       type: String,

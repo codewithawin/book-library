@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+import { apiFetch } from "../../utils/api";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user") || "null"),
@@ -13,26 +12,17 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/auth/signin`, {
+      const data = await apiFetch("/auth/signin", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ email, password }),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        return rejectWithValue(data.message || "Login failed");
-      }
 
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
 
       return { user: data.user, token: data.token };
     } catch (error) {
-      return rejectWithValue(error.message || "Network error");
+      return rejectWithValue(error.message || "Login failed");
     }
   }
 );
@@ -41,26 +31,17 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async ({ email, password, username }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/auth/signup`, {
+      const data = await apiFetch("/auth/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ email, password, username }),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        return rejectWithValue(data.message || "Registration failed");
-      }
 
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
 
       return { user: data.user, token: data.token };
     } catch (error) {
-      return rejectWithValue(error.message || "Network error");
+      return rejectWithValue(error.message || "Registration failed");
     }
   }
 );
@@ -94,7 +75,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || "Login failed";
+        state.error = action.payload;
       });
 
     builder
@@ -110,7 +91,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || "Registration failed";
+        state.error = action.payload;
       });
   },
 });

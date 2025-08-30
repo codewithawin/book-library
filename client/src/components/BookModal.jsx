@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { mockBooks } from "../store/slices/mockBooks";
+import { useDispatch, useSelector } from "react-redux";
+import { addBook, updateBook } from "../store/slices/booksSlice";
 
 const BookModal = ({ isOpen, onClose, book }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { books } = useSelector((state) => state.books);
 
-  const genres = Array.from(
-    new Set(mockBooks.map((book) => book.genre))
-  ).filter(Boolean);
+  const genres = Array.from(new Set(books.map((book) => book.genre))).filter(
+    Boolean
+  );
 
   const {
     register,
@@ -18,7 +21,6 @@ const BookModal = ({ isOpen, onClose, book }) => {
     formState: { errors },
   } = useForm();
 
-  const selectedGenre = watch("genre");
   const selectedStatus = watch("status");
 
   useEffect(() => {
@@ -49,10 +51,11 @@ const BookModal = ({ isOpen, onClose, book }) => {
     setIsLoading(true);
     try {
       if (book) {
-        console.log("Updating book:", { ...book, ...data });
+        await dispatch(updateBook({ ...book, ...data }));
       } else {
-        console.log("Adding book:", data);
+        await dispatch(addBook(data));
       }
+
       onClose();
     } catch (error) {
       console.error(error);
@@ -108,18 +111,17 @@ const BookModal = ({ isOpen, onClose, book }) => {
               <label className="label">
                 <span className="label-text">Genre *</span>
               </label>
-              <select
-                value={selectedGenre}
-                onChange={(e) => setValue("genre", e.target.value)}
-                className="select select-bordered w-full"
-              >
-                <option value="">Select genre</option>
+              <input
+                list="genres"
+                {...register("genre", { required: "Genre is required" })}
+                placeholder="Select or type genre"
+                className="input input-bordered w-full"
+              />
+              <datalist id="genres">
                 {genres.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
+                  <option key={g} value={g} />
                 ))}
-              </select>
+              </datalist>
               {errors.genre && (
                 <p className="text-error text-sm mt-1">
                   {errors.genre.message}
