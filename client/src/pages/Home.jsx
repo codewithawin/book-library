@@ -19,11 +19,11 @@ export default function Home() {
           </p>
 
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link to="/signin" className="btn btn-primary gap-2">
+            <Link to="/login" className="btn btn-primary gap-2">
               <LogIn className="w-4 h-4" />
               Sign In
             </Link>
-            <Link to="/signup" className="btn btn-secondary gap-2">
+            <Link to="/register" className="btn btn-secondary gap-2">
               <UserPlus className="w-4 h-4" />
               Create Account
             </Link>

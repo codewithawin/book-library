@@ -8,7 +8,7 @@ import {
   setSelectedGenre,
   clearFilters,
 } from "../store/slices/booksSlice";
-import { logout } from "../store/slices/authSlice";
+import { logoutUser } from "../store/slices/authSlice";
 import { Library, Plus, Search, LogOut, X } from "lucide-react";
 import BookCard from "../components/BookCard";
 import { usePagination } from "../hooks/usePagination";
@@ -37,7 +37,7 @@ const Dashboard = () => {
     dispatch(fetchBooks());
   }, [dispatch]);
 
-  const handleLogout = () => dispatch(logout());
+  const handleLogout = () => dispatch(logoutUser());
   const handleClearFilters = () => dispatch(clearFilters());
 
   const hasActiveFilters = searchQuery || selectedGenre;

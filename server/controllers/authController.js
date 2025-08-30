@@ -3,7 +3,7 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
-export const signup = async (req, res, next) => {
+export const register = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   if (
@@ -31,16 +31,16 @@ export const signup = async (req, res, next) => {
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
     const { password: pass, ...info } = newUser._doc;
 
-    res.status(201).cookie("access_token", token, { httpOnly: true }).json({
-      user: info,
-      token: token,
-    });
+    res
+      .status(201)
+      .cookie("access_token", token, { httpOnly: true })
+      .json(info);
   } catch (error) {
     next(error);
   }
 };
 
-export const signin = async (req, res, next) => {
+export const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || email === "" || !password || password === "") {
@@ -59,16 +59,16 @@ export const signin = async (req, res, next) => {
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     const { password: pass, ...info } = validUser._doc;
 
-    res.status(200).cookie("access_token", token, { httpOnly: true }).json({
-      user: info,
-      token: token,
-    });
+    res
+      .status(200)
+      .cookie("access_token", token, { httpOnly: true })
+      .json(info);
   } catch (error) {
     next(error);
   }
 };
 
-export const signout = (req, res, next) => {
+export const logout = (req, res, next) => {
   try {
     res.clearCookie("access_token");
     res.status(200).json({ message: "User has been logged out!" });

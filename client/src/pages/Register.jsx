@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, Library } from "lucide-react";
-import { loginUser, clearError } from "../store/slices/authSlice";
+import { Library, Mail, Lock, User } from "lucide-react";
+import { registerUser, clearError } from "../store/slices/authSlice";
 import { toast } from "react-toastify";
 
-export default function SignIn() {
+export default function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -18,16 +18,21 @@ export default function SignIn() {
     formState: { errors },
     setError,
     clearErrors,
+    watch,
   } = useForm({
     defaultValues: {
+      username: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
+  const password = watch("password");
+
   useEffect(() => {
     if (user) {
-      toast.success("Login successful!");
+      toast.success("Account created successfully!");
       navigate("/dashboard");
     }
   }, [user, navigate]);
@@ -41,7 +46,13 @@ export default function SignIn() {
 
   const onSubmit = (data) => {
     dispatch(clearError());
-    dispatch(loginUser(data));
+    dispatch(
+      registerUser({
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      })
+    );
   };
 
   return (
@@ -54,12 +65,35 @@ export default function SignIn() {
           </div>
 
           <p className="text-center text-base text-base-content/70 mb-6">
-            Login to access your bookshelf
+            Create your account to start organizing your books
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <fieldset className="fieldset">
               <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                  <User className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Username"
+                  className="input w-full pl-10 z-0 text-base"
+                  {...register("username", {
+                    required: "Name is required",
+                    minLength: {
+                      value: 2,
+                      message: "Name must be at least 2 characters",
+                    },
+                  })}
+                />
+              </div>
+              {errors.username && (
+                <p className="text-xs text-red-600">
+                  {errors.username.message}
+                </p>
+              )}
+
+              <div className="relative mt-2">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
                   <Mail className="w-5 h-5 text-gray-400" />
                 </div>
@@ -67,7 +101,13 @@ export default function SignIn() {
                   type="email"
                   placeholder="Email"
                   className="input w-full pl-10 z-0 text-base"
-                  {...register("email", { required: "Email is required" })}
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+\.\S+$/,
+                      message: "Invalid email address",
+                    },
+                  })}
                 />
               </div>
               {errors.email && (
@@ -84,12 +124,37 @@ export default function SignIn() {
                   className="input w-full pl-10 z-0 text-base"
                   {...register("password", {
                     required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
                   })}
                 />
               </div>
               {errors.password && (
                 <p className="text-xs text-red-600">
                   {errors.password.message}
+                </p>
+              )}
+
+              <div className="relative mt-2">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                  <Lock className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  className="input w-full pl-10 z-0 text-base"
+                  {...register("confirmPassword", {
+                    required: "Confirm Password is required",
+                    validate: (value) =>
+                      value === password || "Passwords do not match",
+                  })}
+                />
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-xs text-red-600">
+                  {errors.confirmPassword.message}
                 </p>
               )}
             </fieldset>
@@ -99,14 +164,14 @@ export default function SignIn() {
               className="btn btn-primary w-full text-base"
               disabled={isLoading}
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 
           <div className="mt-6 text-center text-sm text-base-content/70">
-            Don’t have an account?{" "}
-            <Link to="/signup" className="link link-primary">
-              Sign up here
+            Already have an account?{" "}
+            <Link to="/login" className="link link-primary">
+              Sign in here
             </Link>
           </div>
         </div>
